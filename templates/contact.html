@@ -1,0 +1,77 @@
+{% extends "layout.html" %}
+
+{% block title %}Contact - Medical Diagnosis System{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h1 class="text-center mb-4">Contact Us</h1>
+            
+            <div class="card mb-4">
+                <div class="card-body">
+                    <p class="lead text-center">Have questions, feedback, or need support? We're here to help!</p>
+                    
+                    <div class="row mt-4">
+                        <div class="col-md-6 offset-md-3">
+                            {% with messages = get_flashed_messages(with_categories=true) %}
+                                {% if messages %}
+                                    {% for category, message in messages %}
+                                        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                                            {{ message }}
+                                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                        </div>
+                                    {% endfor %}
+                                {% endif %}
+                            {% endwith %}
+                            
+                            <form method="POST" action="{{ url_for('contact') }}">
+                                <div class="mb-3">
+                                    <label for="name" class="form-label">Your Name</label>
+                                    <input type="text" class="form-control" id="name" name="name" placeholder="Enter your name" required>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="email" class="form-label">Email Address</label>
+                                    <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email" required>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="subject" class="form-label">Subject</label>
+                                    <input type="text" class="form-control" id="subject" name="subject" placeholder="Enter message subject" required>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="message" class="form-label">Message</label>
+                                    <textarea class="form-control" id="message" name="message" rows="5" placeholder="Enter your message" required></textarea>
+                                </div>
+                                
+                                <div class="d-grid">
+                                    <button type="submit" class="btn btn-primary">Send Message</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    
+                    <div class="row mt-5">
+                        <div class="col-md-4 text-center">
+                            <h4><i class="bi bi-envelope"></i> Email</h4>
+                            <p>contact@medicaldiagnosis.com</p>
+                        </div>
+                        
+                        <div class="col-md-4 text-center">
+                            <h4><i class="bi bi-telephone"></i> Phone</h4>
+                            <p>+1 (555) 123-4567</p>
+                        </div>
+                        
+                        <div class="col-md-4 text-center">
+                            <h4><i class="bi bi-geo-alt"></i> Address</h4>
+                            <p>123 Medical Plaza, Health City, HC 12345</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

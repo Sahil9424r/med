@@ -1,0 +1,86 @@
+{% extends "layout.html" %}
+
+{% block title %}About - Medical Diagnosis System{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h1 class="text-center mb-4">About Our Medical Diagnosis System</h1>
+            
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h2 class="card-title">Our Mission</h2>
+                    <p class="lead">We aim to make preliminary medical diagnosis more accessible to everyone through the power of artificial intelligence and machine learning.</p>
+                    <p>Our Medical Diagnosis System utilizes advanced machine learning algorithms to analyze symptoms and provide preliminary diagnosis information. By processing vast amounts of medical data, our system can identify patterns and correlations that might help users understand potential health conditions based on their symptoms.</p>
+                    <p>While our system provides valuable information, it is important to note that it is not a replacement for professional medical advice. Always consult with a qualified healthcare provider for proper diagnosis and treatment.</p>
+                </div>
+            </div>
+            
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h3 class="card-title">
+                                <i class="bi bi-graph-up text-primary me-2"></i>
+                                How It Works
+                            </h3>
+                            <p class="card-text">Our system uses a Support Vector Machine (SVM) algorithm trained on extensive medical datasets. When you input your symptoms, the algorithm analyzes them against known patterns of diseases and their symptoms.</p>
+                            <p class="card-text">The process includes:</p>
+                            <ol>
+                                <li>Symptom data collection</li>
+                                <li>Data preprocessing and vectorization</li>
+                                <li>Pattern recognition using machine learning</li>
+                                <li>Preliminary diagnosis generation</li>
+                                <li>Recommendations for precautions, medications, diet, and exercise</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h3 class="card-title">
+                                <i class="bi bi-shield-check text-success me-2"></i>
+                                Privacy & Security
+                            </h3>
+                            <p class="card-text">We take your privacy seriously. Our system is designed with privacy and security in mind:</p>
+                            <ul>
+                                <li>No personal health information is stored unless explicitly provided through the contact form</li>
+                                <li>Symptom data is processed in real-time and not stored</li>
+                                <li>All communications are encrypted</li>
+                                <li>We comply with relevant data protection regulations</li>
+                                <li>We do not share any user data with third parties</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h3 class="card-title">
+                        <i class="bi bi-exclamation-triangle text-warning me-2"></i>
+                        Important Disclaimer
+                    </h3>
+                    <p>The Medical Diagnosis System is designed for informational purposes only and is not intended to replace professional medical advice, diagnosis, or treatment. Always seek the advice of your physician or other qualified health provider with any questions you may have regarding a medical condition.</p>
+                    <p>Never disregard professional medical advice or delay in seeking it because of something you have read on this website. If you think you may have a medical emergency, call your doctor or emergency services immediately.</p>
+                    <p>The use of any information provided on this website is solely at your own risk.</p>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-body">
+                    <h3 class="card-title">
+                        <i class="bi bi-people text-info me-2"></i>
+                        Our Team
+                    </h3>
+                    <p>Our diverse team consists of healthcare professionals, data scientists, and software engineers working together to improve health outcomes through technology. To learn more about our development team, please visit our <a href="/developer">Developers</a> page.</p>
+                    <p>If you have any questions, feedback, or need support, please don't hesitate to <a href="/contact">contact us</a>.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

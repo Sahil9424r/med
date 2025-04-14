@@ -1,0 +1,248 @@
+{% extends "layout.html" %}
+
+{% block title %}Medical Diagnosis System{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="card-title">Enter Your Symptoms</h3>
+                </div>
+                <div class="card-body">
+                    {% if message %}
+                    <div class="alert alert-warning">
+                        {{ message }}
+                        {% if invalid_symptoms %}
+                        <p><strong>Invalid symptoms:</strong> {{ invalid_symptoms }}</p>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                    
+                    <form method="POST" action="/predict" id="symptomForm">
+                        <div class="mb-3">
+                            <label for="symptomsInput" class="form-label">Symptoms (comma separated)</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="symptomsInput" name="symptoms" 
+                                       placeholder="E.g., fever, cough, headache" 
+                                       value="{{ user_symptoms if user_symptoms else '' }}"
+                                       autocomplete="off">
+                                <button class="btn btn-primary" type="submit">Diagnose</button>
+                            </div>
+                            <div class="form-text mb-2">Type your symptoms or select from available options</div>
+                            
+                            <div id="symptomsListContainer" class="mt-2 d-none">
+                                <div class="card p-2" style="max-height: 200px; overflow-y: auto;">
+                                    <div id="symptomsList" class="d-flex flex-wrap gap-1">
+                                        <!-- Symptoms will be loaded here -->
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            {% if symptoms %}
+                            <div class="mt-3">
+                                <p class="mb-2">Common symptoms (click to add):</p>
+                                <div class="d-flex flex-wrap gap-1">
+                                    {% for symptom in symptoms %}
+                                        {% if loop.index <= 15 %}
+                                        <span class="badge bg-secondary me-1 mb-1 symptom-tag" onclick="addSymptomToInput('{{ symptom }}')">{{ symptom }}</span>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </form>
+                    
+                    <!-- Diagnosis Results - Positioned immediately below the symptoms input -->
+                    {% if predicted_disease %}
+                    <div id="diagnosisResults" class="mt-4">
+                        <div class="alert alert-info mb-3">
+                            <h4 class="alert-heading">Diagnosis Result</h4>
+                            <p class="mb-0">Based on your symptoms, you may have: <strong>{{ predicted_disease }}</strong></p>
+                        </div>
+                        
+                        <div class="accordion" id="diagnosisAccordion">
+                            <!-- Disease Description -->
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDescription" aria-expanded="true" aria-controls="collapseDescription">
+                                        Disease Description
+                                    </button>
+                                </h2>
+                                <div id="collapseDescription" class="accordion-collapse collapse show" data-bs-parent="#diagnosisAccordion">
+                                    <div class="accordion-body">
+                                        <p>{{ dis_des }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Precautions -->
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePrecautions" aria-expanded="false" aria-controls="collapsePrecautions">
+                                        Precautions
+                                    </button>
+                                </h2>
+                                <div id="collapsePrecautions" class="accordion-collapse collapse" data-bs-parent="#diagnosisAccordion">
+                                    <div class="accordion-body">
+                                        <ul class="list-group list-group-flush">
+                                            {% for precaution in my_precautions %}
+                                            <li class="list-group-item bg-transparent">{{ precaution }}</li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Medications -->
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseMedications" aria-expanded="false" aria-controls="collapseMedications">
+                                        Medications
+                                    </button>
+                                </h2>
+                                <div id="collapseMedications" class="accordion-collapse collapse" data-bs-parent="#diagnosisAccordion">
+                                    <div class="accordion-body">
+                                        <ul class="list-group list-group-flush">
+                                            {% for med_list in medications %}
+                                                {% for med in med_list %}
+                                                <li class="list-group-item bg-transparent">{{ med }}</li>
+                                                {% endfor %}
+                                            {% endfor %}
+                                        </ul>
+                                        <div class="alert alert-warning mt-3">
+                                            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                                            Always consult with a healthcare professional before taking any medication.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Diet Recommendations -->
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDiet" aria-expanded="false" aria-controls="collapseDiet">
+                                        Diet Recommendations
+                                    </button>
+                                </h2>
+                                <div id="collapseDiet" class="accordion-collapse collapse" data-bs-parent="#diagnosisAccordion">
+                                    <div class="accordion-body">
+                                        <ul class="list-group list-group-flush">
+                                            {% for diet_list in my_diet %}
+                                                {% for diet in diet_list %}
+                                                <li class="list-group-item bg-transparent">{{ diet }}</li>
+                                                {% endfor %}
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Exercise Recommendations -->
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExercise" aria-expanded="false" aria-controls="collapseExercise">
+                                        Exercise Recommendations
+                                    </button>
+                                </h2>
+                                <div id="collapseExercise" class="accordion-collapse collapse" data-bs-parent="#diagnosisAccordion">
+                                    <div class="accordion-body">
+                                        <ul class="list-group list-group-flush">
+                                            {% for w in workout %}
+                                            <li class="list-group-item bg-transparent">{{ w }}</li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="alert alert-secondary mt-4">
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-info-circle-fill me-2 fs-4"></i>
+                                <div>
+                                    <p class="mb-0">This is an automated diagnosis and should not replace professional medical advice. Please consult with a healthcare provider.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Disclaimer Card -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h4 class="card-title">
+                        <i class="bi bi-shield-check me-2 text-primary"></i>
+                        Important Disclaimer
+                    </h4>
+                    <p class="card-text">
+                        This diagnosis tool is for informational purposes only and is not intended to be a substitute for professional medical advice, diagnosis, or treatment. Always seek the advice of your physician or other qualified health provider with any questions you may have regarding a medical condition.
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Right Sidebar -->
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="card-title mb-0">
+                        <i class="bi bi-journals me-2"></i>
+                        How It Works
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <ol class="list-group list-group-numbered list-group-flush">
+                        <li class="list-group-item bg-transparent">Enter your symptoms separated by commas</li>
+                        <li class="list-group-item bg-transparent">Our AI model analyzes your symptoms</li>
+                        <li class="list-group-item bg-transparent">Receive a preliminary diagnosis</li>
+                        <li class="list-group-item bg-transparent">Get recommendations for precautions, medications, diet, and exercise</li>
+                    </ol>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="card-title mb-0">
+                        <i class="bi bi-lightbulb me-2"></i>
+                        All Available Symptoms
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <p>Click on any symptom to add it to your input:</p>
+                    <div id="availableSymptoms" class="d-flex flex-wrap gap-1 mt-3" style="max-height: 300px; overflow-y: auto;">
+                        <!-- All symptoms will be loaded here by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Function to add symptom to input field (used with template)
+    function addSymptomToInput(symptom) {
+        const symptomsInput = document.getElementById('symptomsInput');
+        let currentValue = symptomsInput.value;
+        let symptoms = currentValue.split(',').map(s => s.trim()).filter(s => s);
+        
+        // Check if the symptom is already added
+        if (!symptoms.includes(symptom)) {
+            if (symptoms.length > 0) {
+                symptomsInput.value = symptoms.join(', ') + ', ' + symptom;
+            } else {
+                symptomsInput.value = symptom;
+            }
+        }
+        
+        // Focus back on the input
+        symptomsInput.focus();
+    }
+</script>
+{% endblock %}
